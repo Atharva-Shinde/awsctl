@@ -3,10 +3,12 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 )
 
 type Configuration struct {
@@ -42,7 +44,12 @@ func worker() {
 	ctx := context.Background()
 	b, err := x.CreateCluster(ctx, &clusterinfo)
 	if err != nil {
-		fmt.Print(err)
+		//type assertion error check
+		if error, ok := err.(awserr.Error); ok {
+			awserr.Error.Message(error)
+		} else {
+			log.Fatalf(err.Error())
+		}
 	}
 
 	fmt.Print(b)
