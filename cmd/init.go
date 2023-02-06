@@ -1,25 +1,27 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	region                string   //cluster
-	name                  string   //cluster
-	clientRequestToken    string   //cluster
-	endpointPrivateAccess bool     //cluster
-	endpointPublicAccess  bool     //cluster
-	publicAccessCidrs     []string //cluster
-	securityGroupIds      []string //cluster
-	subnetIds             []string //cluster
-	// accessid              string    //creds
-	// secretAccessKey       string    //creds
-	// sessionToken          string    //creds
-	// canexpire             bool      //creds
-	// source                string    //creds
-	// expires               time.Time //creds
-	// BearerAuthToken       string    //config
+	region                string    //cluster
+	name                  string    //cluster
+	clientRequestToken    string    //cluster
+	endpointPrivateAccess bool      //cluster
+	endpointPublicAccess  bool      //cluster
+	publicAccessCidrs     []string  //cluster
+	securityGroupIds      []string  //cluster
+	subnetIds             []string  //cluster
+	accessid              string    //creds
+	secretAccessKey       string    //creds
+	sessionToken          string    //creds
+	canexpire             bool      //creds
+	source                string    //creds
+	expires               time.Time //creds
+	BearerAuthToken       string    //config
 )
 
 var createClusterCmd = &cobra.Command{
@@ -41,7 +43,25 @@ var createClusterCmd = &cobra.Command{
 		// creds.CredValidate()
 
 		//-client
-		// client := &Client{}
+		// client := &Client{
+		// 	opt: eks.Options{
+		// 		Region: region,
+		// 		HTTPClient: ht,
+		// 		Credentials: creds,
+		// 		APIOptions: nil,
+		// 		ClientLogMode: ,
+		// 		DefaultsMode: ,
+		// 		EndpointOptions: ,
+		// 		HTTPSignerV4: nil,
+		// 		EndpointOptions: ,
+		// 		EndpointResolver: nil,
+		// 		Logger: nil,
+		// 		RetryMaxAttempts: ,
+		// 		IdempotencyTokenProvider: nil,
+		// 		Retryer: nil,
+		// 		RetryMode: ,
+		// 	},
+		//  }
 		// client.CreateClient()
 	},
 }
