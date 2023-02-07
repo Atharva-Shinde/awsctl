@@ -1,41 +1,48 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log"
 
-	"github.com/spf13/cobra"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
+	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 )
 
-var createClusterCmd = &cobra.Command{
-	Use:     "create",
-	Aliases: []string{"c"},
-	Run: func(cmd *cobra.Command, args []string) {
-		err := worker()
-		if err != nil {
-			fmt.Print(err)
-		}
+type Handler struct {
+	client       *eks.Client
+	clusterInput *eks.CreateClusterInput
+}
+
+var cluster = Handler{
+	clusterInput: &eks.CreateClusterInput{
+		Name: &name,
+		ResourcesVpcConfig: &types.VpcConfigRequest{
+			EndpointPrivateAccess: nil,
+			EndpointPublicAccess:  nil,
+			PublicAccessCidrs:     nil,
+			SecurityGroupIds:      nil,
+			SubnetIds:             nil,
+		},
+		RoleArn:                 nil,
+		ClientRequestToken:      nil,
+		EncryptionConfig:        nil,
+		KubernetesNetworkConfig: nil,
+		Logging:                 nil,
+		OutpostConfig:           nil,
+		Tags:                    nil,
+		Version:                 nil,
 	},
 }
 
-var (
-	region                string
-	name                  string
-	clientRequestToken    string
-	endpointPrivateAccess bool
-	endpointPublicAccess  bool
-	publicAccessCidrs     []string
-	securityGroupIds      []string
-	subnetIds             []string
-)
+func (h *Handler) Create() {
+	// foo:= Handler{} //initialise empty struct?
+	ctx := context.Background()
+	result, err := h.client.CreateCluster(ctx, cluster.clusterInput)
+	//TODO: error handling
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Sprintf("success:", result)
 
-func init() {
-	createClusterCmd.Flags().StringVarP(&region, "region", "r", "", "Region for cluster")
-	createClusterCmd.Flags().StringVarP(&name, "name", "n", "", "Name of cluster")
-	createClusterCmd.Flags().StringVarP(&clientRequestToken, "clientRequestToken", "token", "", "ClientRequestToken")
-	createClusterCmd.Flags().StringSliceVarP(&publicAccessCidrs, "publicAccessCidrs", "pubcidr", nil, "PublicAccessCidrs")
-	createClusterCmd.Flags().StringSliceVarP(&securityGroupIds, "securityGroupIds", "secgrpid", nil, "SecurityGroupIds")
-	createClusterCmd.Flags().StringSliceVarP(&subnetIds, "subnetIds", "subnetips", nil, "SubnetIds")
-	createClusterCmd.Flags().BoolVarP(&endpointPrivateAccess, "endpointPrivateAccess", "prvtaccess", false, "EndpointPrivateAccess")
-	createClusterCmd.Flags().BoolVarP(&endpointPublicAccess, "endpointPublicAccess", "pubaccess", false, "EndpointPublicAccess")
-	createClusterCmd.MarkFlagsRequiredTogether("region", "name", "ClientRequestToken")
 }
