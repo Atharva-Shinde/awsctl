@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
@@ -38,11 +37,19 @@ var cluster = Handler{
 func (h *Handler) Create() {
 	// foo:= Handler{} //initialise empty struct?
 	ctx := context.Background()
-	result, err := h.client.CreateCluster(ctx, cluster.clusterInput)
-	//TODO: error handling
-	if err != nil {
-		log.Fatal(err)
+	if cluster.clusterInput.ClientRequestToken == nil {
+		fmt.Print("no token provided, generating idempotent token")
 	}
-	fmt.Sprintf("success:", result)
+	result, err := h.client.CreateCluster(ctx, cluster.clusterInput)
+	if err != nil {
+		HandleError(result)
+	}
+	fmt.Sprintf("success:")
+	fmt.Sprintf("cluster info:", result.Cluster)
 
+}
+
+// TODO: error handling
+func HandleError(result *eks.CreateClusterOutput) error {
+	return nil
 }
