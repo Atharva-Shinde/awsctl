@@ -1,44 +1,74 @@
 package authenticator
 
 import (
+	"bufio"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"main.go/cmd"
 )
 
 type Credentials struct {
 	creds aws.Credentials
 }
 
-type config struct {
+type Config struct {
 	cfg aws.Config
 }
 
-// -credentials TODO: way to provide credentials
-var cr = Credentials{
-	creds: aws.Credentials{
-		AccessKeyID:     cmd.Accessid,
-		SecretAccessKey: cmd.SecretAccessKey,
-		SessionToken:    cmd.SessionToken,
-		CanExpire:       cmd.Canexpire,
-		// Source: ,
-		// Expires: ,
-	},
+func GetCredentials() error {
+	scanner := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter credentials\n accesskeyid: ")
+	acceskeyid, err := scanner.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Print("secretaccesskey: ")
+	secretaccesskey, err := scanner.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	sessiontoken, err := scanner.ReadString('\n')
+	if err != nil {
+		log.Fatal(err)
+	}
+	setCredentials(acceskeyid, secretaccesskey, sessiontoken)
+
+	return err
+}
+
+func setCredentials(acceskeyid, secretaccesskey, sessiontoken string) {
+	var cr = Credentials{
+		creds: aws.Credentials{
+			AccessKeyID:     acceskeyid,
+			SecretAccessKey: secretaccesskey,
+			SessionToken:    sessiontoken,
+			// CanExpire:,
+			// Source: ,
+			// Expires: ,
+		},
+	}
+	cr.CredValidate()
 }
 
 func (c *Credentials) CredValidate() {
+
 	switch {
-	case cr.creds.Expired():
+	case c.creds.Expired():
 		log.Fatal("creds expired")
-	case !cr.creds.HasKeys():
+	case c.creds.HasKeys():
 		log.Fatal("need: accessid, secretid")
-	case !cr.creds.Expired() && cr.creds.HasKeys():
-		// call createcluster()  ?
+	case c.creds.Expired() && c.creds.HasKeys():
+		// call createclient()  ?
 
 	}
 
 }
+
+// func getConfig() {
+// 	getCredentials()
+// }
 
 // BearerAuthToken struct literal
 // var token = bearer.Token{
@@ -46,7 +76,7 @@ func (c *Credentials) CredValidate() {
 // 	CanExpire: false,
 // 	Expires: ,
 // }
-// func (b *config) TokenValidate() {
+// func (b *Config) TokenValidate() {
 // 	switch {
 // 	case token.Expired(expires):
 
