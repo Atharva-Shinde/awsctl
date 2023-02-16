@@ -7,14 +7,11 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"main.go/config"
 )
 
 type Credentials struct {
 	creds aws.Credentials
-}
-
-type Config struct {
-	cfg aws.Config
 }
 
 func GetCredentials() error {
@@ -22,14 +19,17 @@ func GetCredentials() error {
 	fmt.Print("Enter credentials\n accesskeyid: ")
 	acceskeyid, err := scanner.ReadString('\n')
 	if err != nil {
+		//improve error handling
 		log.Fatal(err)
 	}
 	fmt.Print("secretaccesskey: ")
 	secretaccesskey, err := scanner.ReadString('\n')
+	//improve error handling
 	if err != nil {
 		log.Fatal(err)
 	}
 	sessiontoken, err := scanner.ReadString('\n')
+	//improve error handling
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,15 +60,10 @@ func (c *Credentials) CredValidate() {
 	case c.creds.HasKeys():
 		log.Fatal("need: accessid, secretid")
 	case c.creds.Expired() && c.creds.HasKeys():
-		// call createclient()  ?
-
+		config.SetConfigHandler(c.creds) // causing import cycle
 	}
 
 }
-
-// func getConfig() {
-// 	getCredentials()
-// }
 
 // BearerAuthToken struct literal
 // var token = bearer.Token{
