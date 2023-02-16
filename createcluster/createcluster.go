@@ -6,15 +6,17 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
+	"main.go/client"
 	"main.go/cmd"
 )
 
 type Handler struct {
-	client       *eks.Client
+	clientAgent  *eks.Client
 	clusterInput *eks.CreateClusterInput
 }
 
 var cluster = Handler{
+	clientAgent: client.Client,
 	clusterInput: &eks.CreateClusterInput{
 		Name: &cmd.ClusterInfo.Name,
 		ResourcesVpcConfig: &types.VpcConfigRequest{
@@ -50,7 +52,7 @@ func (h *Handler) Create() {
 	if cluster.clusterInput.ClientRequestToken == nil {
 		fmt.Print("no token provided, generating idempotent token")
 	}
-	result, err := h.client.CreateCluster(ctx, cluster.clusterInput)
+	result, err := cluster.clientAgent.CreateCluster(ctx, cluster.clusterInput)
 	if err != nil {
 		HandleError(result)
 	}
