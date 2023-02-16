@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"main.go/authenticator"
 )
 
 var (
@@ -48,9 +47,11 @@ type Lg struct {
 var createClusterCmd = &cobra.Command{
 	Use:     "create",
 	Aliases: []string{"c"},
-	Run: func(cmd *cobra.Command, args []string) {
-		authenticator.GetCredentials()
-	},
+
+	// causing import cycle
+	// Run: func(cmd *cobra.Command, args []string) {
+	// 	authenticator.GetCredentials()
+	// },
 }
 
 func init() {
